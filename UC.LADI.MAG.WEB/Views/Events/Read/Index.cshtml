@@ -1,0 +1,23 @@
+@using UC.LADI.MAG.WEB.Common
+
+@{
+    ViewData["Title"] = "Đọc báo";
+    Layout = "~/Pages/Shared/_LayoutPublish.cshtml";
+}
+
+@section styles {
+    <link rel="stylesheet" href="@ConstLocation.value/BookReader/BookReader.css" />
+    <style>
+        #BookReader {
+            width: 100%;
+            height: 100vh;
+        }
+    </style>
+}
+
+<div id="BookReader"></div>
+
+@section scripts {
+    <script src="@ConstLocation.value/BookReader/BookReader.js"></script>
+    <script src="@ConstLocation.value/js/events/read/index.js"></script>
+}

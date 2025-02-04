@@ -1,0 +1,106 @@
+﻿@using UC.LADI.MAG.WEB.Common
+@using Microsoft.Extensions.Localization
+@using UC.LADI.MAG.WEB.Controllers.Language
+
+@inject IStringLocalizer<LAppController> l
+
+@{
+    ViewData["Title"] = "Đăng nhập";
+    Layout = "~/Pages/Shared/_LayoutLogin.cshtml";
+}
+
+<!-- Account Logo -->
+<div class="account-logo">
+    <a href="/"><img src="@ConstLocation.value/img/UCVN.png" alt="UCVN eCommerce"></a>
+</div>
+<!-- /Account Logo -->
+
+<div class="account-box">
+    <div class="account-wrapper">
+        <h3 class="account-title">@l["Auth.Login.title_login"]</h3>
+        <p class="account-subtitle" style="font-size: 16px">@l["App.app_name"]</p>
+
+        <!-- Account Form -->
+        <form id="login-form">
+            <div class="input-block mb-4">
+                <label class="col-form-label">@l["Auth.Login.lbl_login"]</label>
+                <input class="form-control" type="text" tabindex="1" id="username" name="username" />
+            </div>
+            <div class="input-block mb-4">
+                <div class="row align-items-center">
+                    <div class="col">
+                        <label class="col-form-label">@l["Auth.Login.lbl_pass"]</label>
+                    </div>
+                    <div class="col-auto">
+                        <a class="text-muted" href="#">
+                            @l["Auth.Login.forgot_pass"]
+                        </a>
+                    </div>
+                </div>
+                <div class="position-relative">
+                    <input class="form-control" type="password" tabindex="2" id="password" name="password" />
+                    <span class="fa-solid fa-eye-slash" id="toggle-password"></span>
+                </div>
+            </div>
+            <div class="input-block mb-4 text-center">
+                <button class="btn btn-primary account-btn" id="btn-loggin">@l["Auth.Login.btn_login"]</button>
+            </div>
+        </form>
+        <!-- /Account Form -->
+
+    </div>
+</div>
+
+@Html.Raw(TempData["msg"])
+
+@section scripts {
+    <script>
+        $(document).ready(function () {
+            $('#username').focus();
+            $('#btn-loggin').on('click', function (e) {
+                e.preventDefault();
+                var username = $('#username').val();
+                var password = $('#password').val();
+
+                if (!username) {
+                    Toast().ShowToastWarning("Tên đăng nhập bắt buộc nhập !");
+                    return;
+                }
+
+                if (!password) {
+                    Toast().ShowToastWarning("Mật khẩu bắt buộc nhập !");
+                    return;
+                }
+
+                var locationVal = '@ConstLocation.value';
+                $.ajax({
+                    type: "POST",
+                    contentType: "application/json",
+                    dataType: "json",
+                    url: '@ConstLocation.value@Url.Action("Login", "Auth")',
+                    data: JSON.stringify({ UserName: $('#username').val(), Password: $('#password').val() }),
+                    headers: { "Authorization": "Bearer " + new UcHelpers().GetAccessToken() },
+                    success: function (res) {
+                        if (res.success) {
+                            new UcHelpers().SetUserInfo(res.data);
+                            new UcHelpers().GetLangueResource('@ConstLocation.value@Url.Action("GetLanguageResource", "Language")');
+
+                            window.location.href = locationVal + "/Admin/Home";
+                        }
+                        else {
+                            if (res.statusCode == 300) {
+                                Toast().ShowToastWarning(res.message);
+                            }
+                            else {
+                                Toast().ShowToastError(res.message);
+                            }
+                        }
+                    },
+                    error: function () {
+                        Toast().ShowToastError("Tài khoản đăng nhập không tồn tại");
+                    }
+                });
+            })
+        })
+    </script>
+}

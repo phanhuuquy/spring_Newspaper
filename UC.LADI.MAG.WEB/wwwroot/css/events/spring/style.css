@@ -1,0 +1,136 @@
+﻿.background-linear-spring {
+    background: rgb(237, 51, 36);
+    background: linear-gradient(
+        -8deg,
+        rgba(237, 51, 36, 1) 0%,
+        rgba(150, 20, 20, 1) 97%
+    );
+}
+
+.nav_bar {
+    background-color: rgb(255 255 255 / 20%);
+    backdrop-filter: blur(2px);
+    display: flex;
+}
+
+.nav_bar ul li {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.nav_bar ul li a {
+    text-align: center;
+}
+
+.top_background_left {
+    width: calc(var(--fs-text-primary) * 20 * 1.56);
+}
+
+.top_background_right {
+    width: calc(var(--fs-text-primary) * 21 * 1.56);
+}
+
+.middle_background_title {
+    width: calc(var(--fs-text-primary) * 26 * 1.56);
+    align-self: center;
+}
+
+.magazine_nav_container {
+    display: flex;
+    align-self: center;
+}
+
+.book {
+    width: calc(var(--fs-text-primary) * 8 * 1.56);
+    transition: transform 0.3s ease, box-shadow 0.3s ease, opacity 0.3s ease;
+    cursor: pointer;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.book:hover {
+    transform: scale(1.1) rotate(2deg);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.4);
+    opacity: 0.9;
+}
+
+.bottom_background_title {
+    width: calc(var(--fs-text-primary) * 20 * 1.56);
+}
+
+.left_couplet {
+    width: calc(var(--fs-text-primary) * 3 * 1.56);
+}
+
+.right_couplet {
+    width: calc(var(--fs-text-primary) * 4.5 * 1.56);
+}
+
+.grid_image {
+    background: rgb(219, 148, 31);
+    background: linear-gradient(
+        90deg,
+        rgba(219, 148, 31, 1) 0%,
+        rgba(251, 210, 145, 1) 58%,
+        rgba(250, 197, 113, 1) 100%
+    );
+    border-radius: 24px;
+}
+
+.grid_image img {
+    width: calc((var(--fs-text-primary) * 18 * 1.56 - 12) / 4);
+    object-fit: cover;
+    border-radius: inherit;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    aspect-ratio: 1 / 1;
+}
+
+.grid_image img:hover {
+    transform: scale(1.05); /* Phóng to ảnh khi hover */
+    box-shadow: 0 8px 15px rgba(0, 0, 0, 0.3); /* Thêm bóng đổ */
+    filter: brightness(1.1); /* Tăng độ sáng của ảnh */
+}
+
+/* XS: < 576px */
+@media (max-width: 575.98px) {
+    .bottom_background_title {
+        width: calc(var(--fs-text-primary) * 10 * 1.56);
+    }
+
+    .left_couplet {
+        width: calc(var(--fs-text-primary) * 2 * 1.56);
+    }
+
+    .right_couplet {
+        width: calc(var(--fs-text-primary) * 3 * 1.56);
+    }
+
+    .book:hover {
+        transform: scale(1.1);
+        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.4);
+        opacity: 0.9;
+    }
+}
+
+/* SM: 576px - 767.98px */
+@media (min-width: 576px) and (max-width: 767.98px) {
+    .bottom_background_title {
+        width: calc(var(--fs-text-primary) * 15 * 1.56);
+    }
+
+    .left_couplet {
+        width: calc(var(--fs-text-primary) * 2.5 * 1.56);
+    }
+
+    .right_couplet {
+        width: calc(var(--fs-text-primary) * 3.5 * 1.56);
+    }
+
+    .book:hover {
+        transform: scale(1.1) rotate(1deg);
+        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.4);
+        opacity: 0.9;
+    }
+}

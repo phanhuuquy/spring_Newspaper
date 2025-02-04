@@ -1,0 +1,59 @@
+@using UC.LADI.MAG.WEB.Common
+
+@{
+    ViewData["Title"] = "Danh sách bộ sưu tập";
+    Layout = "~/Pages/Shared/_LayoutAdmin.cshtml";
+}
+
+<div class="container">
+    <div class="row">
+        <div class="col-12">
+            <div id="toolbar-actions" class="mb-3">
+                <button id="action-add" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modal-add">
+                    <i class="fa fa-plus"></i> Thêm mới
+                </button>
+            </div>
+            @await Component.InvokeAsync("UCTable", new { id = "collections-table" })
+            
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="modal-add" tabindex="-1" aria-labelledby="modalAddLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalAddLabel">Thêm/Sửa Bộ Sưu Tập</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="collection-form">
+                    <div class="mb-3">
+                        <label for="collection-name" class="form-label">Tên bộ sưu tập</label>
+                        <input type="text" class="form-control" id="collection-name" name="name" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="collection-order-index" class="form-label">Số thứ tự</label>
+                        <input type="number" class="form-control" id="collection-order-index" name="order_index">
+                    </div>
+                    <div class="mb-3">
+                        <label for="collection-tenant" class="form-label">Tenant</label>
+                        <input type="text" class="form-control" id="collection-tenant" name="tenant" required>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button id="form-refresh" class="btn btn-secondary">
+                    <i class="fa fa-redo"></i> Làm mới
+                </button>
+                <button id="btn-save" class="btn btn-primary">
+                    <i class="fa fa-save"></i> Lưu lại
+                </button>
+            </div>
+        </div>
+    </div>li;
+</div>
+
+@section Scripts {
+    <script src="~/js/admin/collections/index.js"></script>
+}

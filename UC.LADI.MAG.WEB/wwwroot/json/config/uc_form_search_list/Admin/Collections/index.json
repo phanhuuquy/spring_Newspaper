@@ -1,0 +1,45 @@
+{
+  "columns": [
+    {
+      "field": "name",
+      "title": "Tên bộ sưu tập",
+      "type": "text",
+      "sortable": true,
+      "class": ""
+    },
+    {
+      "field": "order_index",
+      "title": "Số thứ tự",
+      "type": "number",
+      "sortable": true,
+      "defaultSort": "desc",
+      "class": ""
+    },
+    {
+      "field": "tenant",
+      "title": "tenant",
+      "type": "text",
+      "sortable": true,
+      "class": ""
+    },
+    {
+      "field": "actions",
+      "title": "Sửa/Xóa",
+      "type": "dropdown",
+      "items": [
+        {
+          "id": "edit",
+          "type": "modal",
+          "title": "Chỉnh sửa",
+          "icon": "fa-solid fa-pen-to-square"
+        },
+        {
+          "id": "delete",
+          "type": "button",
+          "title": "Xóa",
+          "icon": "fa-solid fa-trash-can"
+        }
+      ]
+    }
+  ]
+}

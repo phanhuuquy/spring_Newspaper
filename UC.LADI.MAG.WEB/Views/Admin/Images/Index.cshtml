@@ -1,0 +1,373 @@
+@using UC.LADI.MAG.WEB.Common
+
+@{
+    ViewData["Title"] = "Danh sách ảnh";
+    Layout = "~/Pages/Shared/_LayoutAdmin.cshtml";
+}
+
+<div class="container">
+    <div class="row">
+        <div class="col-12">
+            <div id="toolbar-actions" class="mb-3">
+                <button id="action-add" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modal-add">
+                    <i class="fa fa-plus"></i> Thêm mới
+                </button>
+            </div>
+            <div>
+                <table id="images-table" class="table table-striped table-bordered" style="width:100%; overflow-x: auto;">
+                    <thead>
+                        <tr>
+                            <th>Tên ảnh</th>
+                            <th>Đường dẫn</th>
+                            <th>Hình ảnh</th>
+                            <th>Số thứ tự</th>
+                            <th>Sự kiện</th>
+                            <th>Nổi bật</th>
+                            <th>Tenant</th>
+                            <th>Hành động</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="modal-add" tabindex="-1" aria-labelledby="modalAddLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalAddLabel">Thêm/Sửa Ảnh</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="image-form">
+                    <input type="hidden" id="image-id">
+                    <div class="mb-3">
+                        <label for="image-name" class="form-label">Tên ảnh</label>
+                        <input type="text" class="form-control" id="image-name" name="name" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="image-path" class="form-label">Chọn hình ảnh</label>
+                        <input type="file" class="form-control" id="image-path" name="path" accept="image/*">
+                    </div>
+                    <div class="mb-3">
+                        <label for="image-order-index" class="form-label">Số thứ tự</label>
+                        <input type="number" class="form-control" id="image-order-index" name="order_index" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="image-event-id" class="form-label">Sự kiện</label>
+                        <select class="form-select" id="image-event-id" name="event_id" required>
+                            <option value="">Chọn sự kiện</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="image-tenant" class="form-label">Tenant</label>
+                        <input type="text" class="form-control" id="image-tenant" name="tenant" required>
+                    </div>
+                    <div class="form-check mb-3">
+                        <input class="form-check-input" type="checkbox" id="image-is-hot" name="is_hot">
+                        <label class="form-check-label" for="image-is-hot">Nổi bật</label>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button id="btn-refresh" class="btn btn-secondary">
+                    <i class="fa fa-redo"></i> Làm mới
+                </button>
+                <button id="btn-save" class="btn btn-primary">
+                    <i class="fa fa-floppy-disk"></i> Lưu lại
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="modal-view-image" tabindex="-1" aria-labelledby="modalViewImageLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-body text-center">
+                <img id="full-image" src="" alt="Hình ảnh" style="width: 100%; height: auto;">
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            const apiEndpoint = "/api/MagImage/v2";
+            const eventApiEndpoint = "/api/MagEvent/v2";
+
+            let eventCache = {};
+            async function preloadEventNames() {
+                try {
+                    const response = await $.ajax({
+                        url: `${eventApiEndpoint}/GetAllEvents`,
+                        type: "GET"
+                    });
+                    if (response.success) {
+                        eventCache = response.data.reduce((acc, event) => {
+                            acc[event.id] = event.name;
+                            return acc;
+                        }, {});
+                    }
+                } catch (error) {
+                    console.error("Lỗi khi tải danh sách sự kiện:", error);
+                }
+            }
+
+            function transformImagesData(images) {
+                return images.map(image => ({
+                    ...image,
+                    event_name: eventCache[image.event_id] || "Không xác định"
+                }));
+            }
+
+            function populateEventDropdown() {
+                const eventDropdown = $("#image-event-id");
+                eventDropdown.empty().append('<option value="">Chọn sự kiện</option>');
+                for (const [id, name] of Object.entries(eventCache)) {
+                    eventDropdown.append(`<option value="${id}">${name}</option>`);
+                }
+            }
+
+            async function initializeTable() {
+                await preloadEventNames(); 
+                populateEventDropdown();
+
+                $("#images-table").DataTable({
+                    scrollX: true,
+                    ajax: {
+                        url: `${apiEndpoint}/GetAllImages`,
+                        method: "GET",
+                        dataSrc: function (json) {
+                            return transformImagesData(json.data);
+                        }
+                    },
+                    columns: [
+                        { data: "name", title: "Tên ảnh" },
+                        { data: "path", title: "Đường dẫn" },
+                        {
+                            data: "path",
+                            title: "Hình ảnh",
+                            render: function (data) {
+                                return `<img src="${data}" alt="Image" style="width: 100px;" class="img-thumbnail img-clickable">`;
+                            }
+                        },
+                        { data: "order_index", title: "Số thứ tự" },
+                        { data: "event_name", title: "Sự kiện" },
+                        {
+                            data: "is_hot",
+                            title: "Nổi bật",
+                            render: function (data) {
+                                return data ? "True" : "False";
+                            }
+                        },
+                        { data: "tenant", title: "Tenant" },
+                        {
+                            data: null,
+                            title: "Hành động",
+                            render: function (data, type, row) {
+                                return `
+                                                 <div class="dropdown">
+                                                    <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton-${row.id}" data-bs-toggle="dropdown" aria-expanded="false">
+                                                        Hành động
+                                                    </button>
+                                                    <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton-${row.id}">
+                                                        <li>
+                                                            <a class="dropdown-item action-edit" href="javascript:void(0);" data-id="${row.id}">
+                                                                <i class="fa-solid fa-pen-to-square"></i> Sửa
+                                                            </a>
+                                                        </li>
+                                                        <li>
+                                                            <a class="dropdown-item action-delete" href="javascript:void(0);" data-id="${row.id}">
+                                                                <i class="fa-solid fa-trash-can"></i> Xóa
+                                                            </a>
+                                                        </li>
+                                                    </ul>
+                                                </div>`;
+                            }
+                        }
+                    ]
+                });
+            }
+
+            initializeTable();
+
+            $("#images-table").on("click", ".img-clickable", function () {
+                const imgSrc = $(this).attr("src");
+                $("#full-image").attr("src", imgSrc);
+                $("#modal-view-image").modal("show");
+            });
+
+            $("#action-add").on("click", function () {
+                $("#btn-refresh").trigger("click");
+            });
+
+            $("#btn-refresh").on("click", function () {
+                $("#image-form")[0].reset();
+                $("#image-id").val('');
+            });
+
+            $("#btn-save").on("click", function () {
+                const imageId = $("#image-id").val();
+                const avatarFile = $("#image-path")[0].files[0];
+
+                const imageData = {
+                    name: $("#image-name").val()?.trim(),
+                    path: "",
+                    order_index: parseInt($("#image-order-index").val(), 10),
+                    event_id: $("#image-event-id").val()?.trim(),
+                    tenant: $("#image-tenant").val()?.trim(),
+                    is_hot: $("#image-is-hot").is(":checked")
+                };
+
+                if (avatarFile) {
+                    const formData = new FormData();
+                    formData.append("avatar", avatarFile);
+
+                    $.ajax({
+                        url: `${apiEndpoint}/UploadAvatar`,
+                        type: "POST",
+                        data: formData,
+                        processData: false,
+                        contentType: false,
+                        success: function (response) {
+                            if (response.success) {
+                                imageData.path = response.data.replace("/img/image/spring/", "/img/events/spring/");
+                                if (imageId) {
+                                    updateImage(imageId, imageData);
+                                } else {
+                                    createImage(imageData);
+                                }
+                            } else {
+                                Toast().ShowToastError("Upload ảnh thất bại: " + response.message);
+                            }
+                        },
+                        error: function (xhr, status, error) {
+                            console.error("Lỗi upload ảnh:", xhr.responseText, status, error);
+                            Toast().ShowToastError("Lỗi khi upload ảnh.");
+                        }
+                    });
+                } else {
+                    if (imageId) {
+                        updateImage(imageId, imageData);
+                    } else {
+                        createImage(imageData);
+                    }
+                }
+            });
+
+            function createImage(data) {
+                $.ajax({
+                    url: `${apiEndpoint}/CreateImage`,
+                    type: "POST",
+                    contentType: "application/json",
+                    data: JSON.stringify(data),
+                    success: function (res) {
+                        if (res.success) {
+                            Toast().ShowToastSuccess("Thêm mới ảnh thành công!");
+                            $("#modal-add").modal("hide");
+                            $("#images-table").DataTable().ajax.reload();
+                        } else {
+                            Toast().ShowToastError(res.message);
+                        }
+                    },
+                    error: function (err) {
+                        console.error("Lỗi khi thêm mới ảnh:", err);
+                        Toast().ShowToastError("Lỗi khi thêm mới ảnh.");
+                    }
+                });
+            }
+
+            function updateImage(id, data) {
+                $.ajax({
+                    url: `${apiEndpoint}/UpdateImage/${id}`,
+                    type: "PUT",
+                    contentType: "application/json",
+                    data: JSON.stringify(data),
+                    success: function (res) {
+                        if (res.success) {
+                            Toast().ShowToastSuccess("Cập nhật ảnh thành công!");
+                            $("#modal-add").modal("hide");
+                            $("#images-table").DataTable().ajax.reload();
+                        } else {
+                            Toast().ShowToastError(res.message);
+                        }
+                    },
+                    error: function (err) {
+                        console.error("Lỗi khi cập nhật ảnh:", err);
+                        Toast().ShowToastError("Lỗi khi cập nhật ảnh.");
+                    }
+                });
+            }
+
+            $("#images-table").on("click", ".action-edit", function () {
+                const imageId = $(this).data("id");
+                $.ajax({
+                    url: `${apiEndpoint}/GetImageById/${imageId}`,
+                    type: "GET",
+                    success: function (response) {
+                        if (response.success) {
+                            const image = response.data;
+
+                            $("#image-id").val(image.id);
+                            $("#image-name").val(image.name);
+                            $("#image-path").val('');
+                            $("#image-order-index").val(image.order_index);
+                            $("#image-event-id").val(image.event_id);
+                            $("#image-tenant").val(image.tenant);
+                            $("#image-is-hot").prop("checked", image.is_hot);
+
+
+                            const imagePreview = `
+                            <div class="mb-3">
+                                <div>
+                                    <img src="${image.path}" alt="Current Image" style="width: 150px; height: auto;" class="img-thumbnail">
+                                </div>
+                            </div>
+                        `;
+                            $("#image-path").parent().append(imagePreview);
+
+                            $("#modal-add").modal("show");
+                        } else {
+                            Toast().ShowToastError(response.message);
+                        }
+                    },
+                    error: function (err) {
+                        console.error("Lỗi khi lấy dữ liệu ảnh:", err);
+                        Toast().ShowToastError("Lỗi khi lấy dữ liệu ảnh.");
+                    }
+                });
+            });
+
+
+            $("#images-table").on("click", ".action-delete", function () {
+                const imageId = $(this).data("id");
+                if (confirm("Bạn có chắc chắn muốn xóa ảnh này?")) {
+                    $.ajax({
+                        url: `${apiEndpoint}/DeleteImage/${imageId}`,
+                        type: "DELETE",
+                        success: function (res) {
+                            if (res.success) {
+                                Toast().ShowToastSuccess("Xóa ảnh thành công!");
+                                $("#images-table").DataTable().ajax.reload();
+                            } else {
+                                Toast().ShowToastError(res.message);
+                            }
+                        },
+                        error: function (err) {
+                            console.error("Lỗi khi xóa ảnh:", err);
+                            Toast().ShowToastError("Lỗi khi xóa ảnh.");
+                        }
+                    });
+                }
+            });
+
+            loadEvents();
+        });
+    </script>
+}
+

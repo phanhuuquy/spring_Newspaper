@@ -1,0 +1,53 @@
+﻿@using UC.Core.Helpers
+@using UC.LADI.MAG.WEB.Common
+@using Microsoft.Extensions.Configuration
+
+@inject IConfiguration configuration
+@{
+	string base_url_api = configuration.GetSection("Services:ApiApp").Value;
+	string base_url_core = configuration.GetSection("Services:ApiCore").Value;
+}
+
+<!DOCTYPE html>
+<html lang="en" data-layout="vertical" data-topbar="light" data-sidebar="dark" data-sidebar-size="lg"
+	  data-sidebar-image="none">
+
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta name="description" content="UCVN">
+	<meta name="keywords" content="UCVN">
+	<meta name="author" content="UCVN">
+	@await Html.PartialAsync("_Favicons")
+	<title>@ViewData["Title"] - UC.bLib8.0s</title>
+	@Html.Raw(@UcHelper.CssLayoutLogin(ConstLocation.value))
+	<style>
+		.bg-danger-uc {
+			background: linear-gradient(to right, #FF902F 0%, #FC6075 100%) !important;
+		}
+	</style>
+</head>
+<body class="account-page">
+	<!-- Main Wrapper -->
+	<div class="main-wrapper">
+		<div class="account-content">
+			@RenderBody()
+		</div>
+		@await Component.InvokeAsync("Toast")
+	</div>
+	<!-- /Main Wrapper -->
+	@Html.Raw(@UcHelper.JsLayoutLogin(ConstLocation.value))
+	<script>
+		$("#toggle-password").click(function () {
+			$(this).toggleClass("fa-eye fa-eye-slash");
+			if ($("#password").attr("type") == "password") {
+				$("#password").attr("type", "text");
+			} else {
+				$("#password").attr("type", "password");
+			}
+		});
+	</script>
+	@await RenderSectionAsync("Scripts", required: false)
+</body>
+
+</html>

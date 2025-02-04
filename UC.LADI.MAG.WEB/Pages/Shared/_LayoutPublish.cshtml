@@ -1,0 +1,42 @@
+@using UC.Core.Helpers
+@using UC.LADI.MAG.WEB.Common
+@using Microsoft.Extensions.Configuration
+
+@inject IConfiguration configuration
+@{
+    string base_url_api = configuration.GetSection("Services:ApiApp").Value;
+    string base_url_core = configuration.GetSection("Services:ApiCore").Value;
+    string app_code = configuration.GetSection("AppConfig:AppCode").Value;
+}
+
+<!DOCTYPE html>
+<html lang="en" data-layout="vertical" data-topbar="light" data-sidebar="dark" data-sidebar-size="lg"
+    data-sidebar-image="none">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    @Html.Raw(@UcHelper.CssLayoutPublish(ConstLocation.value))
+    <script src="@ConstLocation.value/js/tailwind-3.4.16.min.js"></script>
+    <style>
+        :root {
+            --fs-text-primary: 1rem;
+        }
+        @@font-face {
+            font-family: PiklabSuperFoods;
+            src: url('@ConstLocation.value/fonts/Piklab-Super-Foods.ttf');
+        }
+    </style>
+    @await RenderSectionAsync("styles", required: false)
+</head>
+
+<body>
+    <div class="main-wrapper">
+        @RenderBody()
+    </div>
+    @Html.Raw(@UcHelper.JsLayoutPublish(ConstLocation.value))
+    <script src="@ConstLocation.value/js/jquery-3.7.1.min.js"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+
+</html>

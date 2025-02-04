@@ -1,0 +1,529 @@
+@using UC.LADI.MAG.WEB.Common
+
+@{
+    ViewData["Title"] = "Danh sách báo";
+    Layout = "~/Pages/Shared/_LayoutAdmin.cshtml";
+}
+
+<div class="container">
+    <div class="row">
+        <div class="col-12">
+            <div id="toolbar-actions" class="mb-3 d-flex justify-content-end">
+                <button id="action-add" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modal-add">
+                    <i class="fa fa-plus"></i> Thêm mới
+                </button>
+            </div>
+            <div>
+                @await Component.InvokeAsync("UCTable", new { id = "items-table" })
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="modal-add" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Thêm Mới Item</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <form id="item-form">
+                    <input type="hidden" id="item-id" name="id">
+                    <div class="mb-3">
+                        <label for="item-title">Tiêu đề</label>
+                        <input type="text" id="item-title" class="form-control" name="title" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="item-description" class="form-label">Mô tả</label>
+                        <textarea class="form-control" id="item-description" name="description" rows="3"></textarea>
+                    </div>
+                    <div class="mb-3">
+                        <label for="item-pdf" class="form-label">Đường dẫn PDF</label>
+                        <input type="file" class="form-control" id="item-pdf" name="pdf" accept=".pdf">
+                        <div id="pdf-preview" class="mt-2">
+                        </div>
+                        <input type="hidden" id="current-pdf" name="current-pdf">
+                    </div>
+                    <div class="mb-3">
+                        <label for="item-order-index" class="form-label">Thứ tự</label>
+                        <input type="number" class="form-control" id="item-order-index" name="order_index" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="item-tenant" class="form-label">Tenant</label>
+                        <input type="text" class="form-control" id="item-tenant" name="tenant" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="item-avatar" class="form-label">Hình ảnh</label>
+                        <input type="file" class="form-control" id="item-avatar" name="avatar" accept="image/*">
+                        <div id="avatar-preview" class="mt-2">
+                        </div>
+                        <input type="hidden" id="current-avatar" name="current-avatar">
+                    </div>
+                    <div class="mb-3">
+                        <label for="item-collections" class="form-label">Bộ Sưu Tập</label>
+                        <button type="button" id="btn-show-collections" class="btn btn-outline-primary">Chọn Bộ Sưu Tập</button>
+                        <div id="selected-collections" class="mt-2"></div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+                <button type="button" id="btn-save" class="btn btn-primary">
+                    <i class="fa fa-floppy-disk"></i> Lưu lại
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="modal-edit" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Chỉnh sửa Item</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <form id="edit-item-form">
+                    <input type="hidden" id="edit-item-id" name="id">
+                    <div class="mb-3">
+                        <label for="edit-item-title">Tiêu đề</label>
+                        <input type="text" id="edit-item-title" class="form-control" name="title" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="edit-item-description">Mô tả</label>
+                        <textarea class="form-control" id="edit-item-description" name="description" rows="3"></textarea>
+                    </div>
+                    <div class="mb-3">
+                        <label for="edit-item-pdf" class="form-label">Đường dẫn PDF</label>
+                        <input type="file" class="form-control" id="edit-item-pdf" name="pdf" accept=".pdf">
+                        <div id="edit-pdf-preview" class="mt-2">
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="edit-item-order-index">Thứ tự</label>
+                        <input type="number" class="form-control" id="edit-item-order-index" name="order_index" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="edit-item-tenant">Tenant</label>
+                        <input type="text" class="form-control" id="edit-item-tenant" name="tenant" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="edit-item-avatar" class="form-label">Hình ảnh</label>
+                        <input type="file" class="form-control" id="edit-item-avatar" name="avatar" accept="image/*">
+                        <div id="edit-avatar-preview" class="mt-2">
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="edit-item-collections" class="form-label">Bộ Sưu Tập</label>
+                        <div id="edit-collections-container" class="d-flex flex-wrap gap-3"></div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+                <button type="button" id="btn-edit-save" class="btn btn-primary">Lưu thay đổi</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="modal fade" id="modal-collections" tabindex="-1" aria-labelledby="modalCollectionsLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalCollectionsLabel">Chọn Bộ Sưu Tập</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div id="collections-container" class="d-flex flex-wrap gap-3"></div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+                <button type="button" id="btn-select-collections" class="btn btn-primary">Xác nhận</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+
+        function refreshTable() {
+            table.ajax.reload(null, false);
+        }
+        $(document).ready(async function () {
+
+            var jsonConfig = await Config().FormSearchList("Admin/Items/index.json");
+            const apiEndpoint = "/api/MagItem/v2/GetAllItems";
+
+
+            function getData() {
+
+                UcAjax.get(apiEndpoint).done(response => {
+                    if (response.success) {
+                        console.log("Dữ liệu tải thành công:", response);
+
+
+                        var data = response.data.map(item => {
+                            return {
+                                ...item.item,
+                                collections: item.collections.map(collection => collection.name).join(", ")
+                            };
+                        });
+
+
+                        UcFormHelpers().DataTableAjaxClientSide(
+                            "#items-table",
+                            jsonConfig.columns,
+                            data,
+                            {
+
+                                rowCallback: (row, data, index) => {
+                                    if (data.avatar) {
+                                        $('td', row).eq(jsonConfig.columns.findIndex(c => c.data === "avatar")).html(
+                                            `<a href="${data.avatar}" target="_blank">
+                                                                                <img src="${data.avatar}" alt="Hình ảnh" class="img-thumbnail" style="width: 100px; height: auto;" />
+                                                                            </a>`
+                                        );
+                                    }
+                                    if (data.path) {
+                                        $('td', row).eq(jsonConfig.columns.findIndex(c => c.data === "path")).html(
+                                            `<a href="${data.path}" target="_blank" title="Xem PDF">
+                                                                        ${data.path.split('/').pop()} <!-- Lấy tên file từ đường dẫn -->
+                                                                    </a>`
+                                        );
+                                    }
+
+                                    const actionIndex = jsonConfig.columns.findIndex(c => c.title === "Hành động");
+                                    $('td', row).eq(actionIndex).html(`
+                                        <div class="dropdown">
+                                            <button class="btn btn-secondary btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                                Hành động
+                                            </button>
+                                            <ul class="dropdown-menu dropdown-menu-end" style="position: absolute; z-index: 1050;">
+                                                <li>
+                                                    <button class="dropdown-item action-edit" data-id="${data.id}">
+                                                        <i class="fa-solid fa-eye text-info"></i> Sửa
+                                                    </button>
+                                                </li>
+                                                <li>
+                                                    <button class="dropdown-item action-delete" data-id="${data.id}">
+                                                        <i class="fa-solid fa-trash-can text-danger"></i> Xóa
+                                                    </button>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    `);
+
+
+
+                                }
+                            }
+                        );
+                    } else {
+                        console.error("Lỗi khi tải dữ liệu:", response.message);
+                        alert("Không thể tải dữ liệu, vui lòng thử lại sau!");
+                    }
+                }).catch(error => {
+                    console.error("Lỗi khi gọi API:", error);
+                    alert("Có lỗi xảy ra khi kết nối tới server!");
+                });
+            }
+
+
+            getData();
+        });
+
+        $(document).ready(function () {
+            const createItemEndpoint = "/api/MagItem/v2/CreateItem";
+            const getCollectionsEndpoint = "/api/MagCollection/v2/GetAllCollections";
+
+            let selectedCollectionIds = [];
+            let isEditMode = false;
+
+            function resetForm() {
+                $("#item-form")[0].reset();
+                $("#item-avatar").siblings(".uploaded-file").remove(); 
+                $("#item-pdf").siblings(".uploaded-file").remove(); 
+                $("#current-avatar").empty(); 
+                $("#current-pdf").empty(); 
+                $("#selected-collections").empty(); 
+                selectedCollectionIds = []; 
+                $("#collections-container .collection-checkbox").prop("checked", false);
+            }
+
+            function loadCollections() {
+                UcAjax.get(getCollectionsEndpoint).done(response => {
+                    if (response.success) {
+                        const collections = response.data;
+                        $("#collections-container").empty();
+                        collections.forEach(collection => {
+                            $("#collections-container").append(`
+                                <div class="form-check">
+                                    <input class="form-check-input collection-checkbox" type="checkbox" value="${collection.id}" id="collection-${collection.id}">
+                                    <label class="form-check-label" for="collection-${collection.id}">${collection.name}</label>
+                                </div>
+                           `);
+                        });
+                    } else {
+                        Toast().ShowToastError("Không thể tải danh sách bộ sưu tập.");
+                    }
+                }).fail(() => {
+                    Toast().ShowToastError("Đã xảy ra lỗi khi tải danh sách bộ sưu tập.");
+                });
+            }
+
+            $("#btn-show-collections").on("click", function () {
+                loadCollections();
+                $("#modal-collections").modal("show");
+            });
+
+            $("#btn-select-collections").on("click", function () {
+                selectedCollectionIds = [];
+                $("#selected-collections").empty();
+                $("#collections-container input:checked").each(function () {
+                    const id = $(this).val();
+                    const name = $(this).next("label").text();
+                    selectedCollectionIds.push(id);
+                    $("#selected-collections").append(`<span class="badge bg-primary me-2">${name}</span>`);
+                });
+                $("#modal-collections").modal("hide");
+            });
+
+            $("#btn-save").on("click", async function () {
+                const uploadFile = async (file) => {
+                    const formData = new FormData();
+                    formData.append("file", file);
+
+                    try {
+                        const response = await UcAjax.post("/api/MagItem/v2/UploadFile", formData);
+                        if (response.success) {
+                            return response.data; 
+                        } else {
+                            Toast().ShowToastError("Lỗi tải file: " + response.message);
+                            return null;
+                        }
+                    } catch (error) {
+                        Toast().ShowToastError("Lỗi khi tải file: " + error);
+                        return null;
+                    }
+                };
+
+                let pdfPath = "";
+                let avatarPath = "";
+
+                if ($("#item-pdf")[0].files[0]) {
+                    pdfPath = await uploadFile($("#item-pdf")[0].files[0]);
+                    if (!pdfPath) return; 
+                }
+
+                if ($("#item-avatar")[0].files[0]) {
+                    avatarPath = await uploadFile($("#item-avatar")[0].files[0]);
+                    if (!avatarPath) return;
+                }
+
+                const data = {
+                    item: {
+                        title: $("#item-title").val(),
+                        description: $("#item-description").val(),
+                        path: pdfPath,
+                        avatar: avatarPath,
+                        order_index: parseInt($("#item-order-index").val(), 10),
+                        tenant: $("#item-tenant").val(),
+                    },
+                    collectionIds: selectedCollectionIds
+                };
+
+                UcAjax.post(createItemEndpoint, data)
+                    .done(response => {
+                        if (response.success) {
+                            Toast().ShowToastSuccess("Thêm mới thành công!");
+                            resetForm();
+                            $("#modal-add").modal("hide");
+                            location.reload();
+                        } else {
+                            Toast().ShowToastError(response.message);
+                        }
+                    })
+                    .fail((jqXHR, status, error) => {
+                        Toast().ShowToastError("Lỗi khi thêm mới: " + error);
+                    });
+            });
+
+            $("#action-add").on("click", function () {
+                $("#item-form")[0].reset();
+                $("#current-avatar").empty();
+                $("#current-pdf").empty();
+                $("#selected-collections").empty();
+                resetForm();
+                isEditMode = false;
+                $("#modal-add").modal("show");
+
+
+            });
+        });
+
+
+        // edit / xóa
+        function initializeEditFeature() {
+            $("#items-table").on("click", ".action-edit", function () {
+                const id = $(this).data("id");
+                const getItemEndpoint = `/api/MagItem/v2/GetItemById/${id}`;
+                const getCollectionsEndpoint = "/api/MagCollection/v2/GetAllCollections";
+
+                $("#edit-item-form")[0].reset();
+                $("#edit-pdf-preview").empty();
+                $("#edit-avatar-preview").empty();
+                $("#edit-collections-container").empty();
+
+                UcAjax.get(getItemEndpoint).done(response => {
+                    if (response.success) {
+                        const { item, collections } = response.data;
+
+                        $("#edit-item-id").val(item.id);
+                        $("#edit-item-title").val(item.title);
+                        $("#edit-item-description").val(item.description);
+                        $("#edit-item-order-index").val(item.order_index);
+                        $("#edit-item-tenant").val(item.tenant);
+
+                        if (item.path) {
+                            $("#edit-pdf-preview").html(`
+                                                        <a href="${item.path}" target="_blank" class="text-primary">Xem PDF hiện tại</a>
+                                                    `);
+                        }
+
+                        if (item.avatar) {
+                            $("#edit-avatar-preview").html(`
+                                                        <img src="${item.avatar}" alt="Hình ảnh hiện tại" style="max-width: 150px; display: block;">
+                                                    `);
+                        }
+                        UcAjax.get(getCollectionsEndpoint).done(collectionsResponse => {
+                            if (collectionsResponse.success) {
+                                const allCollections = collectionsResponse.data;
+
+                                allCollections.forEach(collection => {
+                                    const isChecked = collections.some(c => c.id === collection.id) ? "checked" : "";
+                                    $("#edit-collections-container").append(`
+                                                                <div class="form-check">
+                                                                    <input class="form-check-input edit-collection-checkbox" type="checkbox" value="${collection.id}" ${isChecked}>
+                                                                    <label class="form-check-label">${collection.name}</label>
+                                                                </div>
+                                                            `);
+                                });
+                            }
+                        });
+
+                        $("#modal-edit").modal("show");
+                    } else {
+                        Toast().ShowToastError("Không thể tải chi tiết.");
+                    }
+                }).fail(() => {
+                    Toast().ShowToastError("Có lỗi khi kết nối tới server.");
+                });
+            });
+
+     
+            $("#btn-edit-save").on("click", async function () {
+                const id = $("#edit-item-id").val();
+                const updateItemEndpoint = `/api/MagItem/v2/UpdateItem/${id}`;
+
+                const currentPdf = $("#edit-pdf-preview a").attr("href");
+                const currentAvatar = $("#edit-avatar-preview img").attr("src");
+
+                const uploadFile = async (file) => {
+                    const formData = new FormData();
+                    formData.append("file", file);
+
+                    try {
+                        const response = await UcAjax.post("/api/MagItem/v2/UploadFile", formData);
+                        return response.success ? response.data : null;
+                    } catch {
+                        Toast().ShowToastError("Lỗi tải file.");
+                        return null;
+                    }
+                };
+
+                let pdfPath = currentPdf;
+                let avatarPath = currentAvatar;
+
+                if ($("#edit-item-pdf")[0].files[0]) {
+                    pdfPath = await uploadFile($("#edit-item-pdf")[0].files[0]);
+                }
+
+                if ($("#edit-item-avatar")[0].files[0]) {
+                    avatarPath = await uploadFile($("#edit-item-avatar")[0].files[0]);
+                }
+
+                const selectedCollections = [];
+                $("#edit-collections-container .edit-collection-checkbox:checked").each(function () {
+                    selectedCollections.push($(this).val());
+                });
+
+                const data = {
+                    item: {
+                        title: $("#edit-item-title").val(),
+                        description: $("#edit-item-description").val(),
+                        path: pdfPath,
+                        avatar: avatarPath,
+                        order_index: parseInt($("#edit-item-order-index").val(), 10),
+                        tenant: $("#edit-item-tenant").val(),
+                    },
+                    collectionIds: selectedCollections,
+                };
+
+                UcAjax.put(updateItemEndpoint, data)
+                    .done(response => {
+                        if (response.success) {
+                            Toast().ShowToastSuccess("Cập nhật thành công!");
+                            $("#modal-edit").modal("hide");
+                            table.ajax.reload(null, false); // Làm mới bảng
+                            location.reload();
+                            resetForm();
+                        } else {
+                            Toast().ShowToastError("Cập nhật thất bại: " + response.message);
+                        }
+                    })
+                    .fail(() => {
+                        Toast().ShowToastError("Lỗi khi cập nhật dữ liệu.");
+                    });
+            });
+        }
+
+        $(document).ready(function () {
+            initializeEditFeature();
+        });
+
+
+        $("#items-table").on("click", ".action-delete", function () {
+            const id = $(this).data("id");
+
+            if (confirm("Bạn có chắc chắn muốn xóa mục này?")) {
+                UcAjax.delete(`/api/MagItem/v2/DeleteItem/${id}`)
+                    .done(response => {
+                        if (response.success) {
+                            Toast().ShowToastSuccess("Xóa thành công!");
+
+                            resetForm();
+                            table.ajax.reload(null, false);
+
+                   
+                            RefreshFormValues("form-code-to-refresh");
+
+                            location.reload();
+                        } else {
+                            Toast().ShowToastError(response.message);
+                        }
+                    })
+                    .fail(() => {
+                        Toast().ShowToastError("Không thể xóa mục.");
+                    });
+            }
+        });
+
+
+
+    </script>
+}
+

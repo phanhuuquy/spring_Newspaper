@@ -1,0 +1,412 @@
+@using UC.LADI.MAG.WEB.Common
+
+@{
+    ViewData["Title"] = "Danh sách sự kiện";
+    Layout = "~/Pages/Shared/_LayoutAdmin.cshtml";
+}
+
+<div class="container">
+    <div class="row">
+        <div class="col-12">
+            <div id="toolbar-actions" class="mb-3">
+                <button id="action-add" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modal-add">
+                    <i class="fa fa-plus"></i> Thêm mới
+                </button>
+            </div>
+
+            <div>
+                <table id="events-table" class="table table-striped table-bordered" style="width:100%; overflow-x: auto;">
+                    <thead>
+                        <tr>
+                            <th>Tên sự kiện</th>
+                            <th>Mô tả</th>
+                            <th>Ngày bắt đầu</th>
+                            <th>Ngày kết thúc</th>
+                            <th>Địa chỉ</th>
+                            <th>Năm</th>
+                            <th>Hình ảnh</th>
+                            <th>Sửa/Xóa</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="modal-add" tabindex="-1" aria-labelledby="modalAddLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalAddLabel">Thêm/Sửa sự kiện</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="event-form">
+                    <div class="mb-3">
+                        <label for="event-name" class="form-label">Tên sự kiện</label>
+                        <input type="text" class="form-control" id="event-name" name="name" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="event-avatar" class="form-label">Hình ảnh</label>
+                        <input type="file" class="form-control" id="event-avatar" name="avatar">
+                        <div id="preview-avatar" class="mt-2">
+                            <img src="" alt="Preview" id="avatar-preview" style="max-width: 200px; display: none;">
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="event-description" class="form-label">Mô tả</label>
+                        <textarea class="form-control" id="event-description" name="description" rows="3"></textarea>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <label for="event-start-date" class="form-label">Ngày bắt đầu</label>
+                            <input type="date" class="form-control" id="event-start-date" name="start_date" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="event-end-date" class="form-label">Ngày kết thúc</label>
+                            <input type="date" class="form-control" id="event-end-date" name="end_date" required>
+                        </div>
+                    </div>
+                    <div class="row mt-3">
+                        <div class="col-md-6">
+                            <label for="event-address" class="form-label">Địa chỉ</label>
+                            <input type="text" class="form-control" id="event-address" name="address">
+                        </div>
+                        <div class="col-md-6">
+                            <label for="event-year" class="form-label">Năm</label>
+                            <input type="number" class="form-control" id="event-year" name="year" required>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="event-tenant" class="form-label">Tenant</label>
+                        <input type="text" class="form-control" id="event-tenant" name="tenant" required>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button id="form-refresh" class="btn btn-secondary">
+                    <i class="fa fa-redo"></i> Làm mới
+                </button>
+                <button id="btn-save" class="btn btn-primary">
+                    <i class="fa fa-save"></i> Lưu lại
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="image-viewer-modal" tabindex="-1" aria-labelledby="imageViewerLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body text-center">
+                <img id="image-viewer" src="" alt="Hình ảnh" style="width: 100%; height: auto;">
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            const apiEndpoint = "/api/MagEvent/v2/GetAllEvents";
+
+            const table = $("#events-table").DataTable({
+                ajax: {
+                    url: apiEndpoint,
+                    method: "GET",
+                    dataSrc: "data"
+                },
+                columns: [
+                    { data: "name", title: "Tên sự kiện" },
+                    { data: "description", title: "Mô tả" },
+                    {
+                        data: "start_date",
+                        title: "Ngày bắt đầu",
+                        render: function (data) {
+                            return new Date(data).toLocaleDateString("vi-VN");
+                        }
+                    },
+                    {
+                        data: "end_date",
+                        title: "Ngày kết thúc",
+                        render: function (data) {
+                            return new Date(data).toLocaleDateString("vi-VN");
+                        }
+                    },
+                    { data: "address", title: "Địa chỉ" },
+                    { data: "year", title: "Năm" },
+                    {
+                        data: "avatar",
+                        title: "Hình ảnh",
+                        render: function (data) {
+                            if (data) {
+                                return `<img src="${data}" alt="Avatar" style="width: 100px; height: auto; cursor: pointer;" class="img-thumbnail img-clickable">`;
+                            } else {
+                                return `<span>Không có hình ảnh</span>`;
+                            }
+                        }
+                    },
+
+                    {
+                        data: null,
+                        title: "Hành Động",
+                        render: function (data, type, row) {
+                            return `
+                                        <div class="dropdown">
+                                            <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton-${row.id}" data-bs-toggle="dropdown" aria-expanded="false">
+                                                Hành động
+                                            </button>
+                                            <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton-${row.id}">
+                                                <li>
+                                                    <a class="dropdown-item action-edit" href="javascript:void(0);" data-id="${row.id}">
+                                                        <i class="fa-solid fa-pen-to-square"></i> Sửa
+                                                    </a>
+                                                </li>
+                                                <li>
+                                                    <a class="dropdown-item action-delete" href="javascript:void(0);" data-id="${row.id}">
+                                                        <i class="fa-solid fa-trash-can"></i> Xóa
+                                                    </a>
+                                                </li>
+                                            </ul>
+                                        </div>`;
+                        },
+                        orderable: false
+                    }
+                ],
+                responsive: false,
+                scrollX: true,
+                paging: true,
+                searching: true
+            });
+            ``
+            $("#event-avatar").on("change", function () {
+                const file = this.files[0];
+                if (file) {
+                    if (file.size > 5 * 1024 * 1024) {
+                        Toast().ShowToastError("Kích thước file quá lớn. Vui lòng chọn file dưới 5MB.");
+                        this.value = "";
+                        return;
+                    }
+
+                    const allowedTypes = ["image/jpeg", "image/png"];
+                    if (!allowedTypes.includes(file.type)) {
+                        Toast().ShowToastError("Định dạng file không hợp lệ. Vui lòng chọn file JPEG hoặc PNG.");
+                        this.value = "";
+                        return;
+                    }
+
+                    const reader = new FileReader();
+                    reader.onload = function (e) {
+                        $("#avatar-preview").attr("src", e.target.result).show();
+                    };
+                    reader.readAsDataURL(file);
+                } else {
+                    $("#avatar-preview").hide();
+                }
+            });
+
+            $("#events-table").on("click", ".img-clickable", function () {
+                const imgSrc = $(this).attr("src");
+                if (imgSrc) {
+                    $("#image-viewer").attr("src", imgSrc);
+                    $("#image-viewer-modal").modal("show");
+                } else {
+                    Toast().ShowToastError("Không có hình ảnh để hiển thị.");
+                }
+            });
+
+            $("#form-refresh").on("click", function () {
+                $("#event-form")[0].reset();
+                $("#avatar-preview").hide();
+            });
+            $("#events-table").on("click", ".action-delete", function () {
+                const eventId = $(this).data("id");
+                if (confirm("Bạn có chắc chắn muốn xóa sự kiện này?")) {
+                    $.ajax({
+                        url: `/api/MagEvent/v2/DeleteEvent/${eventId}`,
+                        type: "DELETE",
+                        success: function (response) {
+                            if (response.success) {
+                                Toast().ShowToastSuccess("Xóa sự kiện thành công!");
+                                table.ajax.reload();
+                            } else {
+                                Toast().ShowToastError("Có lỗi xảy ra: " + response.message);
+                            }
+                        },
+                        error: function (error) {
+                            console.error("Lỗi khi xóa sự kiện:", error);
+                            Toast().ShowToastError("Lỗi khi xóa sự kiện.");
+                        }
+                    });
+                }
+            });
+            $("#events-table").on("click", ".action-edit", function () {
+                const eventId = $(this).data("id");
+
+
+                $.ajax({
+                    url: `/api/MagEvent/v2/GetEventById/${eventId}`,
+                    type: "GET",
+                    success: function (response) {
+                        if (response.success) {
+                            const event = response.data;
+
+
+                            $("#event-id").val(event.id);
+                            $("#event-name").val(event.name);
+                            $("#event-description").val(event.description);
+                            $("#event-start-date").val(event.start_date.split("T")[0]);
+                            $("#event-end-date").val(event.end_date.split("T")[0]);
+                            $("#event-address").val(event.address);
+                            $("#event-year").val(event.year);
+                            $("#event-tenant").val(event.tenant);
+                            $("#avatar-preview").attr("src", event.avatar).show();
+                            $("#modal-add").modal("show");
+                            $("#btn-save").off("click").on("click", function () {
+                                const updatedData = {
+                                    id: eventId,
+                                    name: $("#event-name").val()?.trim(),
+                                    description: $("#event-description").val()?.trim(),
+                                    start_date: $("#event-start-date").val(),
+                                    end_date: $("#event-end-date").val(),
+                                    address: $("#event-address").val()?.trim(),
+                                    year: parseInt($("#event-year").val(), 10),
+                                    tenant: $("#event-tenant").val()?.trim(),
+                                    avatar: event.avatar
+                                };
+                                $.ajax({
+                                    url: `/api/MagEvent/v2/UpdateEvent/${eventId}`,
+                                    type: "PUT",
+                                    contentType: "application/json",
+                                    data: JSON.stringify(updatedData),
+                                    success: function (res) {
+                                        if (res.success) {
+                                            Toast().ShowToastSuccess("Cập nhật sự kiện thành công!");
+                                            $("#modal-add").modal("hide");
+                                            table.ajax.reload();
+                                        } else {
+                                            Toast().ShowToastError("Có lỗi xảy ra: " + res.message);
+                                        }
+                                    },
+                                    error: function (err) {
+                                        console.error("Lỗi khi cập nhật sự kiện:", err);
+                                        Toast().ShowToastError("Lỗi khi cập nhật sự kiện.");
+                                    }
+                                });
+                            });
+                        } else {
+                            Toast().ShowToastError("Không thể lấy thông tin sự kiện.");
+                        }
+                    },
+                    error: function (error) {
+                        console.error("Lỗi khi lấy dữ liệu sự kiện:", error);
+                        Toast().ShowToastError("Lỗi khi lấy dữ liệu sự kiện.");
+                    }
+                });
+            });
+
+
+
+            $("#btn-save").on("click", function () {
+                const id = $("#event-id").val();
+                const avatarFile = $("#event-avatar")[0].files[0];
+
+                const address = $("#event-address").val()?.trim();
+                const year = $("#event-year").val()?.trim();
+
+                if (!address || !year || isNaN(year) || year <= 0) {
+                    Toast().ShowToastError("Vui lòng nhập đầy đủ thông tin địa chỉ và năm hợp lệ.");
+                    return;
+                }
+
+                const eventData = {
+                    name: $("#event-name").val()?.trim(),
+                    description: $("#event-description").val()?.trim(),
+                    start_date: $("#event-start-date").val(),
+                    end_date: $("#event-end-date").val(),
+                    address: address,
+                    year: parseInt(year, 10),
+                    tenant: $("#event-tenant").val()?.trim(),
+                    avatar: "" 
+                };
+
+                if (avatarFile) {
+                    const formData = new FormData();
+                    formData.append("avatar", avatarFile);
+                    $.ajax({
+                        url: "/api/MagEvent/v2/UploadAvatar",
+                        type: "POST",
+                        data: formData,
+                        processData: false,
+                        contentType: false,
+                        success: function (response) {
+                            if (response.success) {
+                                eventData.avatar = response.data; 
+                                saveEvent(id, eventData);
+                            } else {
+                                Toast().ShowToastError("Upload ảnh thất bại: " + response.message);
+                            }
+                        },
+                        error: function (error) {
+                            console.error("Lỗi khi upload file:", error);
+                            Toast().ShowToastError("Lỗi khi upload ảnh.");
+                        }
+                    });
+                } else {
+                    saveEvent(id, eventData);
+                }
+            });
+            function saveEvent(id, eventData) {
+                if (id) {
+                    $.ajax({
+                        url: `/api/MagEvent/v2/UpdateEvent/${id}`,
+                        type: "PUT",
+                        contentType: "application/json",
+                        data: JSON.stringify(eventData),
+                        success: function (res) {
+                            if (res.success) {
+                                Toast().ShowToastSuccess("Cập nhật sự kiện thành công!");
+                                $("#modal-add").modal("hide");
+                                table.ajax.reload();
+                            } else {
+                                Toast().ShowToastError("Có lỗi xảy ra: " + res.message);
+                            }
+                        },
+                        error: function (err) {
+                            console.error("Lỗi khi cập nhật sự kiện:", err);
+                            Toast().ShowToastError("Lỗi khi cập nhật sự kiện.");
+                        }
+                    });
+                } else {
+                    $.ajax({
+                        url: "/api/MagEvent/v2/CreateEvent",
+                        type: "POST",
+                        contentType: "application/json",
+                        data: JSON.stringify(eventData),
+                        success: function (res) {
+                            if (res.success) {
+                                Toast().ShowToastSuccess("Lưu sự kiện thành công!");
+                                $("#modal-add").modal("hide");
+                                table.ajax.reload();
+                            } else {
+                                Toast().ShowToastError("Có lỗi xảy ra: " + res.message);
+                            }
+                        },
+                        error: function (err) {
+                            console.error("Lỗi khi lưu sự kiện:", err);
+                            Toast().ShowToastError("Lỗi khi lưu sự kiện.");
+                        }
+                    });
+                }
+            }
+
+
+
+        });
+    </script>
+}

@@ -1,0 +1,16 @@
+@using UC.Core.Helpers
+@using UC.Core.Models.Sidebar
+@using UC.LADI.MAG.WEB.Common
+@model SidebarViewModel
+
+<div class="sidebar" id="sidebar">
+    <img src="@ConstLocation.value/img/bg/sidebar-bg.jpg" alt="" class="sidebar-bg-img">
+    <div class="sidebar-layer"></div>
+    <div class="sidebar-inner slimscroll">
+        <div id="sidebar-menu" class="sidebar-menu">
+            <ul id="sidebar-vertical" class="sidebar-vertical">
+                @Html.Raw(@UcHelper.DrawSideBar(Model.Sidebar, Model.UserPerm, Model.MenuActive, @ConstLocation.value))
+            </ul>
+        </div>
+    </div>
+</div> 

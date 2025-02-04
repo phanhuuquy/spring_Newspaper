@@ -1,0 +1,18 @@
+[
+    { 
+        "value": "",
+        "label": "--- Chọn ---"
+    },
+    { 
+        "value": "1",
+        "label": "Phạt tiền"
+    },
+    { 
+        "value": "2",
+        "label": "Giữ thẻ"
+    },
+    { 
+        "value": "3",
+        "label": "Phạt tiền/Giữ thẻ"
+    }
+]

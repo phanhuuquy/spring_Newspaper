@@ -1,0 +1,102 @@
+{
+  "form": {
+    "code": "add_new_item",
+    "layout": {
+      "rows": [
+        {
+          "cols": [
+            {
+              "code": "title",
+              "label": "Tiêu đề",
+              "labelSize": 3,
+              "controlType": "InputText",
+              "controlSize": 9,
+              "disabled": false,
+              "required": true,
+              "placeholder": "Nhập tiêu đề"
+            }
+          ]
+        },
+        {
+          "cols": [
+            {
+              "code": "description",
+              "label": "Mô tả",
+              "labelSize": 3,
+              "controlType": "TextArea",
+              "controlSize": 9,
+              "disabled": false,
+              "required": false,
+              "placeholder": "Nhập mô tả"
+            }
+          ]
+        },
+        {
+          "cols": [
+            {
+              "code": "path",
+              "label": "Đường dẫn",
+              "labelSize": 3,
+              "controlType": "InputText",
+              "controlSize": 9,
+              "disabled": false,
+              "required": true,
+              "placeholder": "Nhập đường dẫn"
+            }
+          ]
+        },
+        {
+          "cols": [
+            {
+              "code": "avatar",
+              "label": "Hình ảnh",
+              "labelSize": 3,
+              "controlType": "FileUpload",
+              "controlSize": 9,
+              "disabled": false,
+              "required": false,
+              "accept": "image/*"
+            }
+          ]
+        }
+      ]
+    }
+  },
+  "group_actions": [
+    {
+      "code": "modal_actions",
+      "actions": [
+        {
+          "id": "btn-refresh",
+          "type": "button",
+          "title": "Làm mới",
+          "isPrimary": false,
+          "className": "",
+          "classNameIcon": "fa-solid fa-redo"
+        },
+        {
+          "id": "btn-save",
+          "type": "button",
+          "title": "Lưu lại",
+          "isPrimary": true,
+          "className": "",
+          "classNameIcon": "fa-solid fa-floppy-disk"
+        }
+      ]
+    },
+    {
+      "code": "top_actions",
+      "actions": [
+        {
+          "id": "btn-add",
+          "code": "Item",
+          "type": "modal",
+          "title": "Thêm mới",
+          "isPrimary": true,
+          "className": "",
+          "classNameIcon": "fa-solid fa-plus"
+        }
+      ]
+    }
+  ]
+}

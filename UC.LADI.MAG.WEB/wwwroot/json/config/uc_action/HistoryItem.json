@@ -1,0 +1,30 @@
+﻿{
+  "group_actions": [
+    {
+      "code": "toolbar_actions",
+      "actions": [
+        {
+          "id": "action-back",
+          "type": "button",
+          "title": "Quay lại",
+          "isPrimary": false,
+          "icon": "fa fa-arrow-left"
+        },
+        {
+          "id": "action-delete-all",
+          "type": "button",
+          "title": "Xóa tất cả",
+          "isPrimary": false,
+          "icon": "fa fa-trash"
+        },
+        {
+          "id": "action-add",
+          "type": "modal",
+          "title": "Thêm mới",
+          "isPrimary": true,
+          "icon": "fa-solid fa-trash-can"
+        }
+      ]
+    }
+  ]
+}

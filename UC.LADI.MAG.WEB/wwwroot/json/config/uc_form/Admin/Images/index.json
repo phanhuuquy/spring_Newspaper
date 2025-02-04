@@ -1,0 +1,121 @@
+{
+  "form": {
+    "code": "add_new_image",
+    "layout": {
+      "rows": [
+        {
+          "cols": [
+            {
+              "code": "name",
+              "label": "Tên ảnh",
+              "labelSize": 3,
+              "controlType": "InputText",
+              "controlSize": 9,
+              "disabled": false,
+              "required": true
+            }
+          ]
+        },
+        {
+          "cols": [
+            {
+              "code": "path",
+              "label": "Đường dẫn",
+              "labelSize": 3,
+              "controlType": "InputText",
+              "controlSize": 9,
+              "disabled": false,
+              "required": true
+            }
+          ]
+        },
+        {
+          "cols": [
+            {
+              "code": "order_index",
+              "label": "Số thứ tự",
+              "labelSize": 3,
+              "controlType": "InputNumber",
+              "controlSize": 9,
+              "disabled": false,
+              "required": false
+            }
+          ]
+        },
+        {
+          "cols": [
+            {
+              "code": "event_id",
+              "label": "Sự kiện",
+              "labelSize": 3,
+              "controlType": "Select2",
+              "controlSize": 9,
+              "disabled": false,
+              "required": false
+            }
+          ]
+        },
+        {
+          "cols": [
+            {
+              "code": "is_hot",
+              "label": "Nổi bật",
+              "labelSize": 3,
+              "controlType": "Checkbox",
+              "controlSize": 9,
+              "disabled": false,
+              "required": false,
+              "options": [
+                {
+                  "label": "Có",
+                  "value": true
+                },
+                {
+                  "label": "Không",
+                  "value": false
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  },
+  "group_actions": [
+    {
+      "code": "modal_actions",
+      "actions": [
+        {
+          "id": "btn-refresh",
+          "type": "button",
+          "title": "Làm mới",
+          "isPrimary": false,
+          "className": "",
+          "classNameIcon": "fa-solid fa-redo"
+        },
+        {
+          "id": "btn-save",
+          "type": "button",
+          "title": "Lưu lại",
+          "isPrimary": true,
+          "className": "",
+          "classNameIcon": "fa-solid fa-floppy-disk"
+        }
+      ]
+    },
+    {
+      "code": "top_actions",
+      "actions": [
+        {
+          "id": "btn-add",
+          "code": "Image",
+          "type": "modal",
+          "title": "Thêm mới",
+          "isPrimary": true,
+          "className": "",
+          "classNameIcon": "fa-solid fa-plus"
+        }
+      ]
+    }
+  ]
+}

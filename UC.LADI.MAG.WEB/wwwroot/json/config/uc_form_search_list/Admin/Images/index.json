@@ -1,0 +1,65 @@
+{
+  "columns": [
+    {
+      "title": "Tên",
+      "data": "name",
+      "colType": "text",
+      "className": ""
+    },
+    {
+      "title": "Đường dẫn",
+      "data": "path",
+      "colType": "text",
+      "className": ""
+    },
+    {
+      "title": "Số thứ tự",
+      "data": "order_index",
+      "colType": "number",
+      "className": ""
+    },
+    {
+      "title": "Sự kiện",
+      "data": "event_id",
+      "colType": "text",
+      "className": ""
+    },
+    {
+      "title": "Nổi bật",
+      "data": "is_hot",
+      "colType": "badges",
+      "options": [
+        {
+          "value": false,
+          "label": "Không",
+          "type": "danger"
+        },
+        {
+          "value": true,
+          "label": "Có",
+          "type": "success"
+        }
+      ]
+    },
+    {
+      "data": null,
+      "type": "dropdown",
+      "defaultContent": [
+        {
+          "code": "Image",
+          "type": "modal",
+          "title": "Chỉnh sửa",
+          "className": "action-edit",
+          "classNameIcon": "fa-solid fa-pencil m-r-5 text-info"
+        },
+        {
+          "code": "",
+          "type": "button",
+          "title": "Xóa",
+          "className": "action-delete",
+          "classNameIcon": "fa-regular fa-trash-can m-r-5 text-danger"
+        }
+      ]
+    }
+  ]
+}

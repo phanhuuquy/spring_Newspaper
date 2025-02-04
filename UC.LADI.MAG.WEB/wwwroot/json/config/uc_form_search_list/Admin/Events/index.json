@@ -1,0 +1,65 @@
+{
+  "columns": [
+    {
+      "title": "Tên sự kiện",
+      "data": "name",
+      "className": "name"
+    },
+    {
+      "title": "Mô tả",
+      "data": "description",
+      "className": "description"
+    },
+    {
+      "title": "Ngày bắt đầu",
+      "data": "start_date",
+      "className": "start_date"
+    },
+    {
+      "title": "Ngày kết thúc",
+      "data": "end_date",
+      "className": "end_date"
+    },
+    {
+      "title": "Địa chỉ",
+      "data": "address",
+      "className": "address"
+    },
+    {
+      "title": "Năm",
+      "data": "year",
+      "className": "year"
+    },
+    {
+      "data": null,
+      "render": "function",
+      "()" {
+        "return" "`",
+        "<button" "class=\"action-edit btn btn-info\"><i",
+        "class=\"fa-solid fa-edit\"></i>" "Chỉnh",
+        "sửa</button>" "<button",
+        "class=\"action-delete btn btn-danger\"><i" "class=\"fa-solid fa-trash\"></i>",
+        "Xóa</button>" "`;"
+      }
+    }
+    {
+      "field": "actions",
+      "title": "Sửa/Xóa",
+      "type": "dropdown",
+      "items": [
+        {
+          "id": "edit",
+          "type": "modal",
+          "title": "Chỉnh sửa",
+          "icon": "fa-solid fa-pen-to-square"
+        },
+        {
+          "id": "delete",
+          "type": "button",
+          "title": "Xóa",
+          "icon": "fa-solid fa-trash-can"
+        }
+      ]
+    }
+  ]
+}

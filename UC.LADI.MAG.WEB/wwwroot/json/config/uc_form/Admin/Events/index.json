@@ -1,0 +1,85 @@
+{
+  "form": {
+    "code": "add_new_event",
+    "layout": {
+      "rows": [
+        {
+          "cols": [
+            {
+              "code": "name",
+              "label": "Tên sự kiện",
+              "labelSize": 3,
+              "controlType": "InputText",
+              "controlSize": 9,
+              "required": true
+            }
+          ]
+        },
+        {
+          "cols": [
+            {
+              "code": "description",
+              "label": "Mô tả",
+              "labelSize": 3,
+              "controlType": "InputText",
+              "controlSize": 9
+            }
+          ]
+        },
+        {
+          "cols": [
+            {
+              "code": "start_date",
+              "label": "Ngày bắt đầu",
+              "labelSize": 3,
+              "controlType": "DatePicker",
+              "controlSize": 9,
+              "required": true
+            },
+            {
+              "code": "end_date",
+              "label": "Ngày kết thúc",
+              "labelSize": 3,
+              "controlType": "DatePicker",
+              "controlSize": 9,
+              "required": true
+            }
+          ]
+        },
+        {
+          "cols": [
+            {
+              "code": "address",
+              "label": "Địa chỉ",
+              "labelSize": 3,
+              "controlType": "InputText",
+              "controlSize": 9
+            },
+            {
+              "code": "year",
+              "label": "Năm",
+              "labelSize": 3,
+              "controlType": "InputNumber",
+              "controlSize": 9
+            }
+          ]
+        }
+      ]
+    }
+  },
+  "actions": [
+    {
+      "id": "form-refresh",
+      "type": "button",
+      "title": "Làm mới",
+      "icon": "fa fa-redo"
+    },
+    {
+      "id": "form-save",
+      "type": "button",
+      "title": "Lưu lại",
+      "icon": "fa fa-save",
+      "isPrimary": true
+    }
+  ]
+}

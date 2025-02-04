@@ -1,0 +1,256 @@
+﻿@using UC.Core.Helpers
+@using UC.Core.Interfaces
+@using Microsoft.AspNetCore.Http
+@using Microsoft.Extensions.Localization
+@using Microsoft.Extensions.Configuration
+@using UC.LADI.MAG.WEB.Common
+@using UC.LADI.MAG.WEB.Controllers.Language
+@inject IStringLocalizer<LAppController> l
+@inject IConfiguration configuration
+@{
+    var returnUrl = string.IsNullOrEmpty(Context.Request.Path) ? "/" : $"{Context.Request.Path.Value}";
+    string base_url_api = configuration.GetSection("Services:ApiApp").Value;
+    string base_url_core = configuration.GetSection("Services:ApiCore").Value;
+    string app_code = configuration.GetSection("AppConfig:AppCode").Value;
+    string auth_code = configuration.GetSection("AppConfig:AuthenticationCode").Value;
+}
+
+<!DOCTYPE html>
+<html lang="en" data-layout="vertical" data-topbar="light" data-sidebar="dark" data-sidebar-size="lg"
+      data-sidebar-image="none">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="UCVN" />
+    <meta name="keywords" content="UCVN" />
+    <meta name="author" content="UCVN" />
+    @await Html.PartialAsync("_Favicons")
+    <title>@ViewData["Title"] - UC.bLib8.5</title>
+    @Html.Raw(@UcHelper.CssLayoutAdmin(ConstLocation.value))
+    @RenderSection("styles", false)
+    <script type='text/javascript'>
+        var base_url_api = '@base_url_api';
+        var base_url_core = '@base_url_core';
+        var app_code = '@app_code';
+        var auth_code = '@auth_code';
+    </script>
+</head>
+<body>
+    @* @await Component.InvokeAsync("UCAuth") *@
+    <!-- Main Wrapper -->
+    <div class="main-wrapper">
+        <!-- Header -->
+        <div class="header">
+            <!-- Logo -->
+            <div class="header-left">
+                <a href="admin-dashboard.html" class="logo">
+                    <img src="@ConstLocation.value/img/logo.svg" alt="Logo" />
+                </a>
+                <a href="admin-dashboard.html" class="logo collapse-logo">
+                    <img src="@ConstLocation.value/img/collapse-logo.svg" alt="Logo" />
+                </a>
+                <a href="admin-dashboard.html" class="logo2">
+                    <img src="@ConstLocation.value/img/logo2.png" width="40" height="40" alt="Logo" />
+                </a>
+            </div>
+            <!-- /Logo -->
+
+            <a id="toggle_btn" href="javascript:void(0);">
+                <span class="bar-icon">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </span>
+            </a>
+
+            <!-- Header Title -->
+            <div class="page-title-box">
+                <h3>@l["App.app_name"]</h3>
+            </div>
+            <!-- /Header Title -->
+
+            <a id="mobile_btn" class="mobile_btn" href="#sidebar"><i class="fa-solid fa-bars"></i></a>
+
+            <!-- Header Menu -->
+            <ul class="nav user-menu">
+                @await Html.PartialAsync("_SelectLanguagePartial")
+                @*
+                <li class="nav-item dropdown">
+                <a href="#" class="dropdown-toggle nav-link" data-bs-toggle="dropdown">
+                <i class="fa-regular fa-bell"></i> <span class="badge rounded-pill">3</span>
+                </a>
+                <div class="dropdown-menu notifications">
+                <div class="topnav-dropdown-header">
+                <span class="notification-title">Thông báo</span>
+                <a href="javascript:void(0)" class="clear-noti"> Xóa tất cả </a>
+                </div>
+                <div class="noti-content">
+                <ul class="notification-list">
+                <li class="notification-message">
+                <a href="activities.html">
+                <div class="chat-block d-flex">
+                <span class="avatar flex-shrink-0">
+                <img src="assets/img/profiles/avatar-02.jpg" alt="User Image" />
+                </span>
+                <div class="media-body flex-grow-1">
+                <p class="noti-details">
+                <span class="noti-title">John Doe</span> added new task
+                <span class="noti-title">Patient appointment booking</span>
+                </p>
+                <p class="noti-time">
+                <span class="notification-time">4 mins ago</span>
+                </p>
+                </div>
+                </div>
+                </a>
+                </li>
+                </ul>
+                </div>
+                <div class="topnav-dropdown-footer">
+                <a href="#">Hiển thị tất cả</a>
+                </div>
+                </div>
+                </li>
+                *@
+                <li class="nav-item dropdown has-arrow main-drop">
+                    <a href="#" class="dropdown-toggle nav-link" data-bs-toggle="dropdown">
+                        <span class="user-img">
+                            <img src="@ConstLocation.value/img/avatar/avatar-27.jpg" alt="User Image" />
+                            <span class="status online"></span>
+                        </span>
+                        <span id="user_name"></span>
+                    </a>
+                    <div class="dropdown-menu">
+                        <a class="dropdown-item" href="@ConstLocation.value/User/Profile">Thông tin cá nhân</a>
+                        <a class="dropdown-item btn-logout">Đăng xuất</a>
+                    </div>
+                </li>
+            </ul>
+            <!-- /Header Menu -->
+            <!-- Mobile Menu -->
+            <div class="dropdown mobile-user-menu">
+                <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                    <i class="fa-solid fa-ellipsis-vertical"></i>
+                </a>
+                <div class="dropdown-menu dropdown-menu-right">
+                    <a class="dropdown-item" href="@ConstLocation.value/User/Profile">Thông tin cá nhân</a>
+                    <a class="dropdown-item btn-logout">Đăng xuất</a>
+                </div>
+            </div>
+            <!-- /Mobile Menu -->
+        </div>
+        <!-- /Header -->
+        <!-- Sidebar -->
+        @* @await Component.InvokeAsync("Sidebar") *@
+        <!-- /Sidebar -->
+        <!-- Page Wrapper -->
+        <div class="page-wrapper">
+            <!-- Page Content -->
+            <div class="content container-fluid">
+                @RenderBody()
+                @* @await Component.InvokeAsync("SettingIcon") *@
+            </div>
+            <!-- /Page Content -->
+        </div>
+        <!-- /Page Wrapper -->
+        <div id="content_print" style="width: 100%"></div>
+
+        @await Component.InvokeAsync("Toast")
+
+        <!-- /Loader modal -->
+        <div class="loader-modal-overlay" id="loaderModal">
+            <div class="loader-modal-content">
+                <div class="loader"></div>
+            </div>
+        </div>
+    </div>
+    <!-- /Main Wrapper -->
+    <script>
+        var locationVal = '@ConstLocation.value';
+    </script>
+    @Html.Raw(UcHelper.JsLayoutAdmin(ConstLocation.value))
+    <!-- Logout -->
+    <script>
+        $(document).ready(function () {
+            let user_name = new UcHelpers().GetUserName();
+
+            if (user_name) {
+                document.getElementById('user_name').textContent = user_name;
+            }
+            $('.btn-logout').click(function () {
+                Notification().Confirm(
+                    'Bạn có muốn đăng xuất không?',
+                    function () {
+                        logout();
+                    },
+                    null,
+                );
+            });
+
+            function logout() {
+                $.ajax({
+                    url: '@ConstLocation.value@Url.Action("Logout", "Auth")',
+                    type: 'GET',
+                    dataType: 'json',
+                    headers: { "Authorization": "Bearer " + new UcHelpers().GetAccessToken() },
+                    success: function (response) {
+                        if (response.success) {
+                            new UcHelpers().SetUserInfo('');
+                            new UcHelpers().SetLang('');
+                            var locationVal = '@ConstLocation.value';
+                            window.location.href = locationVal + '/';
+                        } else {
+                            Toast().ShowToastError('Đăng xuất thất bại!');
+                        }
+                    },
+                    error: function (xhr, status, error) {
+                        Toast().ShowToastError('Có lỗi xảy ra khi đăng xuất!');
+                    },
+                });
+            }
+
+            function ChangeLanguage(lang) {
+                $.ajax({
+                    type: "POST",
+                    contentType: "application/json",
+                    dataType: "json",
+                    url: '@ConstLocation.value@Url.Action("SetLanguage", "Language")?culture=' + lang + '&returnUrl=' + '@returnUrl',
+                    success: function (res) {
+                        new UcHelpers().GetLangueResource('@ConstLocation.value@Url.Action("GetLanguageResource", "Language")');
+                        window.location.href = locationVal + res.returnUrl;
+                    },
+                    error: function () {
+
+                    }
+                });
+            }
+
+            $('.dropdown-menu').on('click', '.language-change-vn', function () {
+                ChangeLanguage('vi');
+            });
+
+            $('.dropdown-menu').on('click', '.language-change-en', function () {
+                ChangeLanguage('en');
+            });
+
+            let menuActive = $('#sidebar-menu .active');
+            if (menuActive.length > 0) {
+                let html = '';
+                for (let i = 0; i < menuActive.length; i++) {
+                    html += '<li class="breadcrumb-item ' + (i == menuActive.length - 1 ? 'active' : '') + '"><a href="#">' + menuActive[i].text + '</a></li>';
+                }
+                $('.breadcrumb').html(html);
+            }
+        });
+    </script>
+
+    <script src="@ConstLocation.value/js/uc-ajax.js"></script>
+    <script>
+        UcAjax.initialize();
+    </script>
+    <script src="@ConstLocation.value/js/uc-base.js"></script>
+
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+
+</html>

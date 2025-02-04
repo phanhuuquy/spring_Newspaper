@@ -1,0 +1,55 @@
+{
+  "form": {
+    "code": "collection_form",
+    "layout": [
+      {
+        "row": [
+          {
+            "field": "name",
+            "label": "Tên bộ sưu tập",
+            "type": "text",
+            "required": true,
+            "size": 9
+          }
+        ]
+      },
+      {
+        "row": [
+          {
+            "field": "order_index",
+            "label": "Số thứ tự",
+            "type": "number",
+            "required": false,
+            "size": 9
+          }
+        ]
+      },
+      {
+        "row": [
+          {
+            "field": "tenant",
+            "label": "tenant",
+            "type": "text",
+            "required": true,
+            "size": 9
+          }
+        ]
+      }
+    ]
+  },
+  "actions": [
+    {
+      "id": "form-refresh",
+      "type": "button",
+      "title": "Làm mới",
+      "icon": "fa fa-redo"
+    },
+    {
+      "id": "form-save",
+      "type": "button",
+      "title": "Lưu lại",
+      "icon": "fa fa-save",
+      "isPrimary": true
+    }
+  ]
+}
