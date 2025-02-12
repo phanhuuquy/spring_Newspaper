@@ -1,2 +1,1 @@
-# UC.LADI.MAG.WEB3
-UC.LADI.MAG.WEB-3
+# spring.Newspaper
